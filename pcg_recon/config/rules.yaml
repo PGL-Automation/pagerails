@@ -1,0 +1,54 @@
+# Matching, classification and escalation rules. Change here, not in code.
+# Every change to this file should go through maker-checker (it changes what
+# gets auto-matched) — the engine stamps a hash of this file on every run.
+
+matching:
+  auto_accept_confidence: 0.90     # >= this: AUTO match; below: PROPOSED (needs reviewer)
+  cheque_window_days: 45           # cheques can clear long after issue
+  aggregate_max_items: 6           # max items combined in a 1:N / N:1 match
+  aggregate_window_days: 3
+  fuzzy_min_similarity: 82         # rapidfuzz token_set_ratio, 0-100
+  fuzzy_amount_tolerance_minor: 0  # >0 lets fuzzy matches absorb small diffs (never on client money)
+
+# Bank-only items: classification -> proposed journal (Dr/Cr against the bank GL).
+# First matching rule wins. `sign`: in | out | any. `aggregate: true` drafts ONE
+# journal per category per month instead of one per bank line.
+#
+# Anchored rules (^...) read the transaction-type code a bank prints at the start of
+# the narration. They run first so the free text of a payment ("Refund of penal
+# charge", "Monthly interest Jan") can never re-label a principal transfer as a fee.
+classification:
+  # --- Providus Bank transaction-type codes (confirmed on live statement, Jan-Sep 2026)
+  - {category: EMTL_STAMP_DUTY, pattern: "^STAMP DUTY",                                sign: out, gl: "6105-EMTL",    aggregate: true}
+  - {category: VAT_ON_CHARGES,  pattern: "^VAT\\b",                                    sign: out, gl: "1450-VAT-IN",  aggregate: true}
+  - {category: BANK_CHARGES,    pattern: "^(COMMISSION|FACILITY OPENING/RENEWAL COMMISSION|MISC\\.)", sign: out, gl: "6101-BANKCHG", aggregate: true}
+  - {category: REVERSAL,        pattern: "^REVERSAL",                                  sign: any, gl: "REVIEW"}
+  - {category: TIME_DEPOSIT_PLACED,   pattern: "^ADD A TIME DEPOSIT",                  sign: out, gl: "1210-TERM-DEP"}
+  - {category: TIME_DEPOSIT_RETURNED, pattern: "^(PREMATURE SETTLE OF TIME DEP|CANCEL A TIME DEPOSIT|.*TIME DEP.*MATUR)", sign: in, gl: "1210-TERM-DEP"}
+  - {category: UNIDENTIFIED_RECEIPT, pattern: "^(INWARD|TRANSFER BETWEEN|ACCOUNT TRANSFERS|A/C TO A/C|OWN ACCOUNT|NAPS|REMITA|SETTLEMENT TRANSACTIONS|COLLECTION)", sign: in,  gl: "2190-SUSPENSE"}
+  - {category: UNIDENTIFIED_PAYMENT, pattern: "^(OUTWARD|TRANSFER BETWEEN|ACCOUNT TRANSFERS|A/C TO A/C|OWN ACCOUNT|REMITA|COLLECTION|MTHLY SALARY)", sign: out, gl: "2190-SUSPENSE"}
+  # --- generic narration rules (other banks)
+  - {category: REVERSAL,        pattern: "\\bREV\\b|REVERSAL|RETURNED|REFUND",         sign: any, gl: "REVIEW"}
+  - {category: EMTL_STAMP_DUTY, pattern: "EMTL|ELECTRONIC MONEY TRANSFER LEVY|STAMP DUTY", sign: out, gl: "6105-EMTL", aggregate: true}
+  - {category: VAT_ON_CHARGES,  pattern: "\\bVAT\\b",                                  sign: out, gl: "1450-VAT-IN", aggregate: true}
+  - {category: SMS_ALERT,       pattern: "\\bSMS\\b|ALERT CHARGE",                     sign: out, gl: "6101-BANKCHG", aggregate: true}
+  - {category: WHT_ON_INTEREST, pattern: "\\bWHT\\b|WITHHOLDING",                      sign: out, gl: "1460-WHT-REC"}
+  - {category: BANK_CHARGES,    pattern: "\\bCOMM\\b|\\bCOT\\b|MAINT|CHARGE|\\bFEES?\\b|COMMISSION|TOKEN", sign: out, gl: "6101-BANKCHG", aggregate: true}
+  - {category: INTEREST_INCOME, pattern: "INTEREST|\\bINT\\.? ?(CR|PAID|CAP)",         sign: in,  gl: "4201-INT-INC"}
+  - {category: UNIDENTIFIED_RECEIPT, pattern: ".*", sign: in,  gl: "2190-SUSPENSE"}
+  - {category: UNIDENTIFIED_PAYMENT, pattern: ".*", sign: out, gl: "2190-SUSPENSE"}
+
+# Per-transfer charge tariff check (bank charge audit). Charge legs are tied to their
+# transfer by the NIP session ID the bank prints on every leg.
+charge_audit:
+  vat_rate: 0.075                  # VAT on commission
+  categories: [BANK_CHARGES, VAT_ON_CHARGES, EMTL_STAMP_DUTY]
+
+ageing_buckets_days: [7, 30, 90]   # -> 0-7, 8-30, 31-90, >90
+
+escalation:
+  stale_cheque_days: 180           # unpresented cheques older than this -> write-back review
+  unmatched_escalate_days: 30      # any open item older than this -> Head of Finance
+  client_money_escalate_days: 2    # client/fund money items older than this -> Compliance
+  large_item_minor: 5000000000     # NGN 50m: any unmatched item this size -> CFO same day
+  aml_review_unidentified_receipts: true   # client-money unidentified credits -> AML queue (ADAPT)

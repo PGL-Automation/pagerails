@@ -1,0 +1,114 @@
+# Column-mapping profiles. The reader finds the header row by looking for any of
+# the `date` names, so bank letterhead above the table does not matter.
+# Header names are matched case/space/punctuation-insensitively.
+#
+# IMPORTANT: bank portal layouts change without notice. Tune each profile against
+# a real download from that bank before go-live, and keep one sample per bank in
+# samples/ as a regression fixture (tests fail loudly if a layout drifts).
+
+# ---------------- bank statement profiles ----------------
+bank_split_dr_cr:            # most NG internet-banking CSV/XLSX exports
+  name: bank_split_dr_cr
+  columns:
+    date: [Trans Date, Transaction Date, Tran Date, Posting Date, Date, Value Date]
+    description: [Narration, Description, Remarks, Details, Transaction Details, Narrative]
+    reference: [Reference, Ref, Reference No, Transaction Reference, Tran Ref, Cheque No]
+    money_out: [Debit, Debits, Withdrawal, Withdrawals, Debit Amount, DR]
+    money_in: [Credit, Credits, Lodgement, Lodgements, Deposit, Credit Amount, CR]
+    balance: [Balance, Running Balance, Closing Balance, Book Balance]
+
+bank_signed_drcr:            # single amount + D/C indicator column
+  name: bank_signed_drcr
+  columns:
+    date: [Value Date, Transaction Date, Date]
+    description: [Narration, Description]
+    reference: [Reference, Tran ID]
+    amount: [Amount, Tran Amount]
+    drcr: [DR/CR, Dr/Cr, Part Tran Type, Type, Indicator]
+    balance: [Balance]
+
+custodian_cash:              # custodian / trustee fund cash statement
+  name: custodian_cash
+  columns:
+    date: [Settlement Date, Value Date, Cash Date, Date]
+    description: [Transaction Description, Description, Narrative, Transaction Type]
+    reference: [Trade Reference, Client Reference, Reference, Custodian Reference]
+    amount: [Net Amount, Cash Amount, Amount]
+    balance: [Cash Balance, Balance]
+
+pdf_generic:
+  name: pdf_generic
+  currency: NGN
+
+providus_xls:                # Providus Bank internet-banking "Statement of Account" (.xls), confirmed on a live
+  name: providus_xls         # PAM client-account export, Jan-Sep 2026 (6,853 lines, control totals tie exactly)
+  date_format: "%d/%m/%Y"
+  columns:
+    date: [Transaction Date]           # posting date; Value Date differs on <0.3% of lines
+    description: [Transaction Details]
+    reference: [DOC-NUM]               # "0" when absent; NIP session ID sits at the end of the narration
+    money_out: [Debit Amount]
+    money_in: [Credit Amount]
+    balance: [Current Balance]         # DR/CR column is always blank on this export: sign comes from Dr/Cr columns
+  control_labels:
+    opening: Period Opening Balance
+    closing: Period Closing Balance
+    total_debit: Total Debit Amount
+    total_credit: Total Credit Amount
+    count_debit: Number of Debit Transaction(s)
+    count_credit: Number of Credit Transaction(s)
+
+# ---------------- ledger / cashbook profiles ----------------
+# Book side sign: money into bank = positive (debit to the bank GL).
+sage_cashbook:
+  name: sage_cashbook
+  columns:
+    date: [Date, Posting Date, Tran Date]
+    reference: [Reference, Ref, Doc No]
+    description: [Details, Description, Narration]
+    money_in: [Debit, Receipts]
+    money_out: [Credit, Payments]
+    doc_type: [Type, Tran Type]
+
+quickbooks_register:
+  name: quickbooks_register
+  date_format: "%m/%d/%Y"   # QuickBooks US default; set "%d/%m/%Y" if the company file uses NG locale
+  columns:
+    date: [Date]
+    reference: [Num, Ref No]
+    description: [Memo, Description, Payee]
+    money_in: [Deposit, Increase]
+    money_out: [Payment, Decrease]
+    doc_type: [Type, Transaction Type]
+
+odoo_journal_items:
+  name: odoo_journal_items
+  columns:
+    date: [Date]
+    reference: [Reference, Journal Entry, Number]
+    description: [Label, Name]
+    money_in: [Debit]
+    money_out: [Credit]
+    account: [Account, Account Code]
+
+excel_cashbook:              # finance-maintained spreadsheet cashbooks
+  name: excel_cashbook
+  columns:
+    date: [Date]
+    reference: [Ref, Voucher No, PV No, Reference]
+    description: [Narration, Particulars, Description]
+    money_in: [Receipts, Inflow, Debit]
+    money_out: [Payments, Outflow, Credit]
+    balance: [Balance]
+
+symplus_ledger:              # Neulogic Symplus general-ledger export (Providus client account, Apr-Sep 2026)
+  name: symplus_ledger       # GL0811101500. Sign: Credit Amount = money INTO bank (+), Debit Amount = money OUT (-).
+  columns:
+    date: [Effective Date]
+    description: [Transaction Description]
+    reference: [Reference, Trans.No, Batch No]
+    money_in:  [Credit Amount]    # credit to asset = cash receipt (PART-LIQ, subscriptions in)
+    money_out: [Debit Amount]     # debit to asset  = cash payment (outward transfers, placements out)
+    balance: [Balance]
+  skip_patterns:
+    - "Migrated Opening Balance"  # system migration entry — not a real transaction

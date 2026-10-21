@@ -1,0 +1,257 @@
+<title>PCG Bank Reconciliation System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+/* Layout: single reading column (~760px) with wide tables in their own scroll boxes; a sticky contents rail on desktop. Ledger-paper feel: ruled tables, mono figures. */
+:root{
+  --bg:#f6f7f9; --paper:#ffffff; --ink:#15202e; --muted:#5a6676; --rule:#d9dee6;
+  --accent:#0d6b63; --accent-soft:#e3f1ef; --high:#b3261e; --high-soft:#fbe9e7; --med:#8a5a00; --med-soft:#fbf1dc; --ok:#1d6b35; --ok-soft:#e5f3e8;
+  --f-display:"IBM Plex Serif", Georgia, serif; --f-body:"IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif; --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --paper:#161d27; --ink:#e4e9f0; --muted:#98a3b3; --rule:#2a3441;
+  --accent:#4fb8ab; --accent-soft:#16312f; --high:#f08a80; --high-soft:#3a1c1a; --med:#e0b458; --med-soft:#33290f; --ok:#7fcf93; --ok-soft:#15301d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --paper:#161d27; --ink:#e4e9f0; --muted:#98a3b3; --rule:#2a3441;
+  --accent:#4fb8ab; --accent-soft:#16312f; --high:#f08a80; --high-soft:#3a1c1a; --med:#e0b458; --med-soft:#33290f; --ok:#7fcf93; --ok-soft:#15301d; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--f-body);padding:0 16px}
+.wrap{max-width:1120px;margin:0 auto;padding-block:40px 80px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px}
+nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;font-size:13px}
+nav ol{list-style:none;margin:0;padding:0;display:grid;gap:6px;counter-reset:s}
+nav a{color:var(--muted);text-decoration:none}
+nav a:hover,nav a:focus-visible{color:var(--accent)}
+main{min-width:0;max-width:780px}
+header{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:8px}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font:600 36px/1.15 var(--f-display);margin:12px 0 10px;text-wrap:balance}
+h2{font:600 22px/1.25 var(--f-display);margin:48px 0 12px;text-wrap:balance;display:flex;gap:12px;align-items:baseline}
+h2 .n{font:500 13px var(--f-mono);color:var(--accent)}
+h3{font:600 15px/1.3 var(--f-body);margin:24px 0 6px}
+p,li{max-width:68ch}
+.lede{font-size:17px;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:8px 24px;font:13px var(--f-mono);color:var(--muted);margin-top:14px}
+.meta b{color:var(--ink);font-weight:500}
+.scroll{overflow-x:auto;margin:14px 0;border:1px solid var(--rule);background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;vertical-align:top;padding:8px 12px;border-bottom:1px solid var(--rule)}
+th{font:600 11.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+code,.mono{font-family:var(--f-mono);font-size:.9em}
+code{background:var(--accent-soft);padding:1px 5px;border-radius:3px}
+.pill{display:inline-block;font:500 11px var(--f-mono);padding:2px 8px;border-radius:99px;white-space:nowrap}
+.p-high{background:var(--high-soft);color:var(--high)} .p-med{background:var(--med-soft);color:var(--med)} .p-ok{background:var(--ok-soft);color:var(--ok)} .p-acc{background:var(--accent-soft);color:var(--accent)}
+.stmt{font-family:var(--f-mono);font-size:13.5px;background:var(--paper);border:1px solid var(--rule);padding:16px 20px;margin:14px 0;overflow-x:auto}
+.stmt div{display:flex;justify-content:space-between;gap:24px;white-space:nowrap}
+.stmt .t{border-top:1px solid var(--ink);font-weight:600;margin-bottom:10px}
+.stmt .d{border-top:1px solid var(--ink);border-bottom:3px double var(--ink);font-weight:600;color:var(--ok)}
+.flow{background:var(--paper);border:1px solid var(--rule);padding:12px;margin:14px 0;overflow-x:auto}
+.flow svg{display:block;min-width:680px;width:100%;height:auto}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;margin:16px 0;font-size:14px}
+.decisions li{margin-bottom:8px}
+footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
+@media (max-width:860px){.wrap{grid-template-columns:1fr;gap:0}nav{display:none}h1{font-size:28px}}
+</style>
+
+<div class="wrap">
+<nav aria-label="Contents"><ol>
+<li><a href="#scope">1 · Scope</a></li><li><a href="#arch">2 · Architecture</a></li><li><a href="#ingest">3 · Ingestion</a></li>
+<li><a href="#match">4 · Matching</a></li><li><a href="#stmt">5 · Statement</a></li><li><a href="#ng">6 · Nigerian items</a></li>
+<li><a href="#controls">7 · Controls</a></li><li><a href="#esc">8 · Escalation</a></li><li><a href="#flow">9 · Workflow &amp; RACI</a></li>
+<li><a href="#data">10 · Data model</a></li><li><a href="#v1">11 · v0.1 results</a></li><li><a href="#road">12 · Roadmap</a></li><li><a href="#open">13 · Decisions needed</a></li>
+</ol></nav>
+
+<main>
+<header>
+<div class="eyebrow">Page Capital Group · Finance &amp; Operations · System design</div>
+<h1>Bank Reconciliation System</h1>
+<p class="lede">One engine that reconciles every bank and custodian cash account of Page Asset Management Limited and Page Capital Limited against the books, daily for client and fund money and monthly for operating accounts, with maker-checker sign-off and an audit trail an examiner can walk.</p>
+<div class="meta"><span><b>Version</b> 0.1 draft</span><span><b>Date</b> 29 Sep 2026</span><span><b>Owner</b> Group CEO/CIO</span><span><b>Build</b> <span class="mono">pcg-recon</span> v0.1 (working)</span></div>
+</header>
+
+<h2 id="scope"><span class="n">01</span>Scope</h2>
+<p>Every cash account the group controls, across both licensed entities. The account type drives cadence, tolerance and escalation.</p>
+<div class="scroll"><table>
+<tr><th>Entity</th><th>Account type</th><th>Examples</th><th>Cadence</th><th>Tolerance</th></tr>
+<tr><td>PAM</td><td>Operating</td><td>Fees, payroll, vendors</td><td>Monthly</td><td>Nil</td></tr>
+<tr><td>PAM</td><td>Client money <span class="pill p-high">client money</span></td><td>Subscription / redemption collection</td><td>Daily</td><td>Nil, no tolerance matches</td></tr>
+<tr><td>PAM</td><td>Fund custody <span class="pill p-high">client money</span></td><td>Fund cash at custodian / trustee</td><td>Daily</td><td>Nil, no tolerance matches</td></tr>
+<tr><td>PCL</td><td>Operating</td><td>Opex, funding lines</td><td>Monthly</td><td>Nil</td></tr>
+<tr><td>PCL</td><td>Collections</td><td>Loan repayments</td><td>Daily</td><td>Nil</td></tr>
+<tr><td>PCL</td><td>Disbursement</td><td>Loan drawdowns</td><td>Daily</td><td>Nil</td></tr>
+</table></div>
+<p><b>Out of scope for v1:</b> securities position reconciliation (units at custodian vs fund register), FX revaluation, intercompany netting. The data model leaves room for all three.</p>
+
+<h2 id="arch"><span class="n">02</span>Architecture</h2>
+<p>Five layers. Each source is normalised into one transaction shape before any matching happens, so adding a bank means adding a column mapping, not code.</p>
+<div class="flow" role="img" aria-label="Data flows from bank and ledger sources through normalisation, matching, reconciliation and review into the Excel pack, journals, AML queue and audit log">
+<svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="12">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+<g fill="var(--paper)" stroke="var(--rule)">
+<rect x="10" y="20" width="150" height="100" rx="4"/><rect x="10" y="135" width="150" height="95" rx="4"/>
+<rect x="200" y="75" width="110" height="100" rx="4"/><rect x="345" y="75" width="110" height="100" rx="4"/>
+<rect x="490" y="75" width="110" height="100" rx="4"/><rect x="635" y="20" width="115" height="210" rx="4"/>
+</g>
+<g fill="var(--ink)">
+<text x="22" y="40" font-weight="600">Bank side</text>
+<text x="22" y="60" fill="var(--muted)">CSV / XLSX downloads</text><text x="22" y="76" fill="var(--muted)">PDF statements</text><text x="22" y="92" fill="var(--muted)">MT940 feeds</text><text x="22" y="108" fill="var(--muted)">Custodian cash</text>
+<text x="22" y="155" font-weight="600">Book side</text>
+<text x="22" y="175" fill="var(--muted)">Sage · QuickBooks · Odoo</text><text x="22" y="191" fill="var(--muted)">Excel cashbooks</text><text x="22" y="207" fill="var(--muted)">Group Postgres ledger</text>
+<text x="212" y="98" font-weight="600">Normalise</text><text x="212" y="118" fill="var(--muted)">one Txn shape</text><text x="212" y="134" fill="var(--muted)">kobo integers</text><text x="212" y="150" fill="var(--muted)">continuity check</text>
+<text x="357" y="98" font-weight="600">Match</text><text x="357" y="118" fill="var(--muted)">7 passes</text><text x="357" y="134" fill="var(--muted)">confidence score</text><text x="357" y="150" fill="var(--muted)">carry-forward</text>
+<text x="502" y="98" font-weight="600">Reconcile</text><text x="502" y="118" fill="var(--muted)">statement</text><text x="502" y="134" fill="var(--muted)">classify, age</text><text x="502" y="150" fill="var(--muted)">alerts</text>
+<text x="647" y="42" font-weight="600">Outputs</text>
+<text x="647" y="66" fill="var(--muted)">Excel pack</text><text x="647" y="88" fill="var(--muted)">Review queue</text><text x="647" y="110" fill="var(--muted)">Draft journals</text><text x="647" y="132" fill="var(--muted)">AML queue</text><text x="647" y="154" fill="var(--muted)">Sign-off</text><text x="647" y="176" fill="var(--muted)">Audit log</text><text x="647" y="198" fill="var(--muted)">Run store</text>
+</g>
+<g stroke="var(--muted)" fill="none" stroke-width="1.3" marker-end="url(#ar)">
+<path d="M160 70 L198 110"/><path d="M160 182 L198 142"/><path d="M310 125 L343 125"/><path d="M455 125 L488 125"/><path d="M600 125 L633 125"/>
+<path d="M547 175 C547 220 400 220 400 178" stroke-dasharray="4 3"/>
+</g>
+<text x="410" y="236" fill="var(--muted)" font-size="11">open items carried to next period</text>
+</svg></div>
+
+<h2 id="ingest"><span class="n">03</span>Ingestion</h2>
+<div class="scroll"><table>
+<tr><th>Source</th><th>How it is read</th><th>Integrity check</th></tr>
+<tr><td>Bank CSV / XLSX</td><td>Profile of header synonyms; header row located automatically below letterhead; split Dr/Cr or signed + DR/CR flag; newest-first exports re-ordered</td><td>Every running balance recomputed</td></tr>
+<tr><td>PDF statement</td><td>Text layer parsed line by line; <b>sign taken from balance movement</b>, not column position; wrapped narrations re-joined</td><td>Balance movement vs printed amount; stated closing</td></tr>
+<tr><td>MT940</td><td><code>:60F:</code> / <code>:61:</code> / <code>:86:</code> / <code>:62F:</code>, reversal marks RC/RD</td><td>Opening + lines = closing</td></tr>
+<tr><td>Custodian cash</td><td>Same tabular reader, custodian profile</td><td>Running cash balance</td></tr>
+<tr><td>Accounting exports</td><td>Sage, QuickBooks, Odoo, Excel cashbook profiles; account filter for multi-account journals</td><td>Running balance where present; opening vs prior closing</td></tr>
+<tr><td>Postgres ledger</td><td>Read-only SQL on posted journal lines for the bank GL code</td><td>Opening = sum of posted lines before period</td></tr>
+</table></div>
+<p>All money is held as integer kobo. Multi-file downloads are chained (closing of file <i>n</i> must equal opening of file <i>n+1</i>) and overlapping rows de-duplicated.</p>
+
+<h2 id="match"><span class="n">04</span>Matching passes</h2>
+<p>Passes run from most to least certain. Each only sees what earlier passes left. A match at or above <b>0.90</b> confidence is accepted automatically; anything below goes to a reviewer and the items stay open on the statement until approved.</p>
+<div class="scroll"><table>
+<tr><th>Pass</th><th>Rule</th><th>Typical case</th><th class="num">Confidence</th></tr>
+<tr><td class="mono">D</td><td>Reviewer decisions from earlier runs: approve, manual pair, reject</td><td>Anything a human settled</td><td class="num">1.00</td></tr>
+<tr><td class="mono">P0</td><td>Equal and opposite items on one side, within 7 days, with reversal wording or shared reference</td><td>Failed NIP transfer and its reversal</td><td class="num">0.97</td></tr>
+<tr><td class="mono">P1</td><td>Shared strong reference and equal amount</td><td>NIP session ID, cheque number, PV / subscription code</td><td class="num">0.95–1.00</td></tr>
+<tr><td class="mono">P5</td><td>Carried bank-only items of one category cleared by a later catch-up journal</td><td>Last month's EMTL booked as one JV</td><td class="num">0.80–0.95</td></tr>
+<tr><td class="mono">P2</td><td>Equal amount inside the date window; ranked by date gap and narration similarity. Ambiguous or small unsupported pairs are capped below threshold</td><td>Vendor payment dated a day apart</td><td class="num">0.80–0.96</td></tr>
+<tr><td class="mono">P3</td><td>One-to-many and many-to-one exact sums (up to 6 items). Unique solution plus shared reference or narration needed for auto</td><td>Bulk payroll batch; tranched receipt</td><td class="num">0.70–0.95</td></tr>
+<tr><td class="mono">P4</td><td>Narration similarity outside the window; optional tolerance, never on client money</td><td>Late-posted entry</td><td class="num">≤ 0.85, always review</td></tr>
+</table></div>
+<p>Cheques get their own window: book date up to 45 days before bank date, never materially after.</p>
+
+<h2 id="stmt"><span class="n">05</span>Reconciliation statement</h2>
+<p>Standard two-sided form. Every adjusting line in the Excel pack is a live <code>SUMIFS</code> over the open-items sheet, so each figure traces to its lines. Example below is the October run of the client collections account from the test data.</p>
+<div class="stmt" aria-label="Example reconciliation statement">
+<div><span>Balance per bank statement</span><span>535,899,650.00</span></div>
+<div><span>Add: deposits in transit</span><span>–</span></div>
+<div><span>Less: unpresented cheques / outstanding payments</span><span>–</span></div>
+<div class="t"><span>Adjusted bank balance</span><span>535,899,650.00</span></div>
+<div><span>Balance per cashbook</span><span>520,904,400.00</span></div>
+<div><span>Add: bank credits not in book</span><span>15,000,000.00</span></div>
+<div><span>Less: bank debits not in book (EMTL, SMS, VAT)</span><span>(4,750.00)</span></div>
+<div class="t"><span>Adjusted book balance</span><span>535,899,650.00</span></div>
+<div class="d"><span>Unreconciled difference</span><span>0.00</span></div>
+</div>
+<p>The ₦15m of credits not in book are two unidentified receipts into a client account. The statement balances, but the run is marked <span class="pill p-med">RECONCILED-WITH-EXCEPTIONS</span> and the items go to AML review. A zero difference is necessary, not sufficient.</p>
+
+<h2 id="ng"><span class="n">06</span>Nigerian bank items</h2>
+<p>Bank-only items are classified by narration and turned into draft journals for finance to approve. Patterns and GL codes live in <code>rules.yaml</code>, not code.</p>
+<div class="scroll"><table>
+<tr><th>Category</th><th>Narration signals</th><th>Draft entry (outflow)</th></tr>
+<tr><td>EMTL / stamp duty</td><td>EMTL, electronic money transfer levy, stamp duty</td><td>Dr levy expense / Cr bank</td></tr>
+<tr><td>VAT on charges</td><td>VAT</td><td>Dr input VAT / Cr bank</td></tr>
+<tr><td>SMS alert</td><td>SMS, alert charge</td><td>Dr bank charges / Cr bank</td></tr>
+<tr><td>Bank charges</td><td>COT, maintenance, commission, fee, token</td><td>Dr bank charges / Cr bank</td></tr>
+<tr><td>WHT on interest</td><td>WHT, withholding</td><td>Dr WHT receivable / Cr bank</td></tr>
+<tr><td>Interest income</td><td>Interest, int cr / paid / cap</td><td>Dr bank / Cr interest income</td></tr>
+<tr><td>Reversal</td><td>REV, reversal, returned, refund</td><td>Human review</td></tr>
+<tr><td>Unidentified</td><td>Anything else</td><td>Suspense, plus AML review on client money</td></tr>
+</table></div>
+
+<h2 id="controls"><span class="n">07</span>Controls</h2>
+<div class="scroll"><table>
+<tr><th>Control</th><th>How it is enforced</th></tr>
+<tr><td>Maker-checker</td><td>Preparer cannot sign their own run. Unreconciled runs need a written explanation to sign.</td></tr>
+<tr><td>Segregation of duties</td><td>Reconciler has read-only ledger access. Journals leave as drafts through the normal approval flow.</td></tr>
+<tr><td>Completeness of statements</td><td>Running-balance chain on every line; file chain across downloads; stated vs computed closing.</td></tr>
+<tr><td>Period integrity</td><td>Statement and ledger openings must equal the prior run's closings. A mismatch signals back-dated postings.</td></tr>
+<tr><td>Rule change control</td><td>Hash of <code>rules.yaml</code> and every input file stamped on each run.</td></tr>
+<tr><td>Tamper evidence</td><td>SHA-256 chained audit log of runs, decisions and sign-offs; <code>verify-audit</code> reports the first broken entry.</td></tr>
+<tr><td>Client money protection</td><td>No tolerance matches, daily cadence, 2-day escalation, unidentified credits to AML.</td></tr>
+<tr><td>Human judgement kept</td><td>Low-confidence matches never reduce open items until approved.</td></tr>
+</table></div>
+
+<h2 id="esc"><span class="n">08</span>Escalation matrix</h2>
+<div class="scroll"><table>
+<tr><th>Alert</th><th>Trigger</th><th>Severity</th><th>Goes to</th><th>By</th></tr>
+<tr><td>Unreconciled difference</td><td>Difference ≠ 0</td><td><span class="pill p-high">HIGH</span></td><td>Financial Controller</td><td>Same day</td></tr>
+<tr><td>Statement continuity</td><td>Balance chain broken</td><td><span class="pill p-high">HIGH</span></td><td>Preparer, then bank RM</td><td>Same day</td></tr>
+<tr><td>Opening mismatch</td><td>Opening ≠ prior closing</td><td><span class="pill p-high">HIGH</span></td><td>Financial Controller</td><td>Same day</td></tr>
+<tr><td>AML unidentified receipt</td><td>Unknown credit to client / fund account</td><td><span class="pill p-high">HIGH</span></td><td>MLRO via ADAPT</td><td>Same day</td></tr>
+<tr><td>Client money aged</td><td>Open &gt; 2 days</td><td><span class="pill p-high">HIGH</span></td><td>Compliance</td><td>Next day</td></tr>
+<tr><td>Large open item</td><td>≥ ₦50m</td><td><span class="pill p-high">HIGH</span></td><td>CFO</td><td>Same day</td></tr>
+<tr><td>Aged item</td><td>Open &gt; 30 days</td><td><span class="pill p-med">MEDIUM</span></td><td>Head of Finance</td><td>Month-end</td></tr>
+<tr><td>Stale cheque</td><td>Unpresented &gt; 180 days</td><td><span class="pill p-med">MEDIUM</span></td><td>Finance, for write-back</td><td>Month-end</td></tr>
+<tr><td>Possible duplicate</td><td>Identical bank lines</td><td><span class="pill p-med">MEDIUM</span></td><td>Preparer</td><td>Next run</td></tr>
+</table></div>
+<p>Thresholds are defaults set in <code>rules.yaml</code>; the board risk committee should confirm them.</p>
+
+<h2 id="flow"><span class="n">09</span>Workflow and responsibilities</h2>
+<div class="scroll"><table>
+<tr><th>Step</th><th>Daily (client / fund / collections)</th><th>Monthly (operating)</th><th>Responsible</th></tr>
+<tr><td>Statements land</td><td>By 09:00 via MT940 / SFTP or portal download</td><td>Working day 1</td><td>Treasury ops</td></tr>
+<tr><td>Engine run</td><td>09:30 scheduled</td><td>Working day 2</td><td>Recon officer (maker)</td></tr>
+<tr><td>Review queue cleared</td><td>By 12:00</td><td>Working day 3</td><td>Senior accountant</td></tr>
+<tr><td>Draft journals posted</td><td>Weekly</td><td>Working day 3</td><td>GL accountant</td></tr>
+<tr><td>Sign-off</td><td>By 15:00</td><td>Working day 5</td><td>Financial Controller (checker)</td></tr>
+<tr><td>AML exceptions</td><td>Same day</td><td>As raised</td><td>MLRO</td></tr>
+<tr><td>Pack to management</td><td>Weekly exceptions summary</td><td>With management accounts</td><td>Head of Finance</td></tr>
+</table></div>
+
+<h2 id="data"><span class="n">10</span>Data model</h2>
+<div class="scroll"><table>
+<tr><th>Table</th><th>Holds</th></tr>
+<tr><td class="mono">runs</td><td>One row per account per period: balances, difference, status, maker, checker, rule and input hashes</td></tr>
+<tr><td class="mono">open_items</td><td>Unmatched lines at run close; the pool carried into the next run</td></tr>
+<tr><td class="mono">decisions</td><td>Reviewer approvals, rejections and manual pairings, keyed by line IDs</td></tr>
+<tr><td class="mono">audit_log</td><td>Hash-chained record of every run, decision and sign-off</td></tr>
+</table></div>
+<p>v0.1 stores these in SQLite. The schema is plain SQL and moves into the group PostgreSQL (AWS af-south-1) unchanged, next to the ledger.</p>
+
+<h2 id="v1"><span class="n">11</span>What v0.1 does today</h2>
+<p>The engine is built and tested on two months of synthetic data for five example accounts, one per input format, with every reconciling item a real month produces planted in it.</p>
+<div class="scroll"><table>
+<tr><th>Check</th><th>Result</th></tr>
+<tr><td>Closing balances parsed vs known truth (10 runs, 5 formats)</td><td><span class="pill p-ok">10 / 10 exact</span></td></tr>
+<tr><td>Unreconciled difference</td><td><span class="pill p-ok">Nil on all runs</span></td></tr>
+<tr><td>September open items = true reconciling items</td><td><span class="pill p-ok">Exact</span></td></tr>
+<tr><td>October: carried items cleared, only planted unknown credits remain</td><td><span class="pill p-ok">Exact</span></td></tr>
+<tr><td>Randomised stress test, 30 datasets</td><td><span class="pill p-ok">29 clean</span> <span class="pill p-acc">1 correctly sent to review</span></td></tr>
+<tr><td>Deleted statement line detected</td><td><span class="pill p-ok">Continuity alert raised</span></td></tr>
+<tr><td>Self sign-off; tampered audit entry</td><td><span class="pill p-ok">Both refused / detected</span></td></tr>
+<tr><td>Excel pack formulas</td><td><span class="pill p-ok">139 formulas, 0 errors</span></td></tr>
+</table></div>
+<p>The one review case in the stress test was two ₦9.8m receipts that could each clear the same item. The engine did not guess.</p>
+<div class="note">Synthetic data proves the logic, not the bank layouts. Each real bank export needs its column profile confirmed against one live download and one month already reconciled by hand before go-live.</div>
+
+<h2 id="road"><span class="n">12</span>Roadmap</h2>
+<div class="scroll"><table>
+<tr><th>Phase</th><th>Deliverable</th><th class="num">Weeks</th></tr>
+<tr><td>1 · Pilot</td><td>Real profiles for all banks and custodians; parallel run beside the manual process for one closed month per account</td><td class="num">1–3</td></tr>
+<tr><td>2 · Go-live</td><td>Scheduled daily runs for client, fund and collections accounts; monthly for operating; retire spreadsheets</td><td class="num">4–5</td></tr>
+<tr><td>3 · Integrate</td><td>Postgres ledger feed; AML queue into ADAPT; run store moved into the group database</td><td class="num">6–8</td></tr>
+<tr><td>4 · Front end</td><td>Web review queue and sign-off screens with role-based access, replacing the Excel round-trip</td><td class="num">9–12</td></tr>
+<tr><td>5 · Extend</td><td>Bank API / host-to-host feeds; securities position recon; FX accounts; intercompany</td><td class="num">13+</td></tr>
+</table></div>
+
+<h2 id="open"><span class="n">13</span>Decisions needed</h2>
+<ol class="decisions">
+<li><b>Bank and custodian list.</b> Every account per entity, with GL codes, so the registry can be filled in.</li>
+<li><b>Ledger of record per entity.</b> Which accounting package each entity and fund uses today, and when the Postgres ledger takes over.</li>
+<li><b>Thresholds.</b> Confirm ₦50m large-item, 2-day client-money and 180-day stale-cheque defaults.</li>
+<li><b>Named roles.</b> Makers, checkers and the MLRO contact for the AML route.</li>
+<li><b>Bank feeds.</b> Which banks will provide MT940 or SFTP drops, so portal downloads can be retired.</li>
+<li><b>Suspense policy.</b> Whether unidentified client-money receipts may ever be posted to suspense, or must be held until identified or returned.</li>
+</ol>
+
+<footer>Page Capital Group · Bank Reconciliation System design · v0.1 draft, 29 September 2026. Companion to the <span class="mono">pcg-recon</span> engine package.</footer>
+</main>
+</div>

@@ -1,0 +1,30 @@
+Date,Type,Reference,Details,Debit,Credit
+01/10/2026,PMT,PV109055,Payment to Lagos Energy Ltd PV109055,,6710000.00
+02/10/2026,RCPT,PAM-SUB-922016,Receipt Emeka Nwosu PAM-SUB-922016,17920000.00,
+02/10/2026,JV,JV-BC-EMTL,Sep 2026 EMTL levy,,300.00
+02/10/2026,JV,JV-BC-SMS ,Sep 2026 SMS alert charges,,4000.00
+02/10/2026,JV,JV-BC-VAT ,Sep 2026 VAT on bank charges,,1237.50
+02/10/2026,JV,JV-BC-ACCO,Sep 2026 Account maintenance fee,,12500.00
+03/10/2026,RCPT,,Being amount received from Chioma Okafor,22160000.00,
+03/10/2026,PMT,PV105508,Payment to Primeaudit Partners PV105508,,14970000.00
+03/10/2026,CHQ,CHQ 000312,Chq 000312 Ikeja Legal Chambers,,2200000.00
+04/10/2026,PMT,PV105679,Payment to Zenith Office Supplies PV105679,,2310000.00
+05/10/2026,RCPT,PAM-SUB-567480,Receipt Emeka Nwosu PAM-SUB-567480,13400000.00,
+05/10/2026,RCPT,,Being amount received from Ngozi Eze,1520000.00,
+09/10/2026,PMT,PV109335,Payment to Ikoyi Properties Ltd PV109335,,14920000.00
+09/10/2026,PMT,PV107437,Payment to Lagos Energy Ltd PV107437,,15440000.00
+09/10/2026,PMT,PV106170,Payment to Swiftnet Solutions PV106170,,18060000.00
+09/10/2026,PMT,,Swiftnet retainer,,1500000.00
+10/10/2026,RCPT,,Being amount received from Chioma Okafor,19570000.00,
+10/10/2026,PMT,PV107818,Payment to Ikoyi Properties Ltd PV107818,,29980000.00
+10/10/2026,PMT,,Swiftnet retainer,,1500000.00
+11/10/2026,PMT,PV101028,Payment to Datasafe Nigeria Ltd PV101028,,5150000.00
+16/10/2026,,AFH-2026-091,Receipt Afolabi Holdings settlement,20000000.00,
+18/10/2026,RCPT,,Being amount received from Yusuf Abdullahi,24700000.00,
+18/10/2026,RCPT,PAM-SUB-597822,Receipt Yusuf Abdullahi PAM-SUB-597822,16020000.00,
+21/10/2026,RCPT,,Being amount received from Funmilayo Adeyemi,44030000.00,
+21/10/2026,PMT,BULK10931,Bulk batch BULK10931 item 1,,4125000.00
+21/10/2026,PMT,BULK10931,Bulk batch BULK10931 item 2,,2870000.00
+21/10/2026,PMT,BULK10931,Bulk batch BULK10931 item 3,,1655500.00
+23/10/2026,PMT,PV109157,Payment to Ikoyi Properties Ltd PV109157,,15150000.00
+27/10/2026,PMT,PV104207,Payment to Lagos Energy Ltd PV104207,,16510000.00

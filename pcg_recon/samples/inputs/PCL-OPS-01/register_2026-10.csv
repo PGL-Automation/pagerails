@@ -1,0 +1,32 @@
+Date,Type,Num,Memo,Payment,Deposit
+10/02/2026,RCPT,PCL-LN-36395,Receipt Funmilayo Adeyemi PCL-LN-36395,,48440000.00
+10/02/2026,JV,JV-BC-EMTL,Sep 2026 EMTL levy,450.00,
+10/02/2026,JV,JV-BC-SMS ,Sep 2026 SMS alert charges,4000.00,
+10/02/2026,JV,JV-BC-VAT ,Sep 2026 VAT on bank charges,1237.50,
+10/02/2026,JV,JV-BC-ACCO,Sep 2026 Account maintenance fee,12500.00,
+10/02/2026,JV,JV-BC-INTE,Sep 2026 Interest credit,,1845210.45
+10/02/2026,JV,JV-BC-WHT ,Sep 2026 WHT on interest,184521.05,
+10/04/2026,CHQ,CHQ 000774,Chq 000774 Ikeja Legal Chambers,2200000.00,
+10/05/2026,PMT,PV104117,Payment to Datasafe Nigeria Ltd PV104117,13320000.00,
+10/06/2026,RCPT,,Being amount received from Chioma Okafor,,18840000.00
+10/07/2026,PMT,PV104399,Payment to Lagos Energy Ltd PV104399,5590000.00,
+10/07/2026,PMT,PV101838,Payment to Zenith Office Supplies PV101838,18890000.00,
+10/08/2026,RCPT,PCL-LN-36326,Receipt Yusuf Abdullahi PCL-LN-36326,,1950000.00
+10/08/2026,PMT,PV104285,Payment to Datasafe Nigeria Ltd PV104285,18180000.00,
+10/10/2026,PMT,,Swiftnet retainer,1500000.00,
+10/11/2026,PMT,,Swiftnet retainer,1500000.00,
+10/12/2026,RCPT,PCL-LN-90322,Receipt Emeka Nwosu PCL-LN-90322,,43610000.00
+10/13/2026,PMT,PV105895,Payment to Zenith Office Supplies PV105895,10640000.00,
+10/14/2026,RCPT,,Being amount received from Adebayo Oluwaseun,,12210000.00
+10/14/2026,PMT,PV106027,Payment to Lagos Energy Ltd PV106027,28090000.00,
+10/16/2026,,AFH-2026-091,Receipt Afolabi Holdings settlement,,20000000.00
+10/17/2026,RCPT,,Being amount received from Funmilayo Adeyemi,,1270000.00
+10/18/2026,PMT,PV105298,Payment to Swiftnet Solutions PV105298,11450000.00,
+10/18/2026,PMT,PV106301,Payment to Primeaudit Partners PV106301,2970000.00,
+10/19/2026,RCPT,PCL-LN-41277,Receipt Halima Bello PCL-LN-41277,,21530000.00
+10/22/2026,PMT,PV103314,Payment to Zenith Office Supplies PV103314,20220000.00,
+10/24/2026,PMT,BULK10515,Bulk batch BULK10515 item 1,4125000.00,
+10/24/2026,PMT,BULK10515,Bulk batch BULK10515 item 2,2870000.00,
+10/24/2026,PMT,BULK10515,Bulk batch BULK10515 item 3,1655500.00,
+10/28/2026,RCPT,,Being amount received from Chioma Okafor,,35560000.00
+10/28/2026,PMT,PV109840,Payment to Primeaudit Partners PV109840,15770000.00,

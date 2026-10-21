@@ -1,0 +1,41 @@
+# Environment — never commit secrets
+.env
+.env.local
+.env.production
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+dist/
+
+# Node
+node_modules/
+frontend/.next/
+frontend/out/
+
+# DB and uploads — persist on server, not in git
+pcg_recon/recon.db
+pcg_recon/samples/output/
+backend/uploads/
+data/
+
+# macOS
+.DS_Store
+
+# SSL certs — provisioned on server by Certbot
+nginx/ssl/
+
+# Analysis outputs
+analysis/payer_map_L03.xlsx
+signatures
+*.pyc
+*.xlsx
+*.xls
+*.xls
+*.sta
+*.pdf
+todo/
+frontend/.git/

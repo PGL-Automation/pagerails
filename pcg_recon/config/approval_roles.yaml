@@ -1,0 +1,48 @@
+# approval_roles.yaml
+#
+# Maps approval roles to the email addresses of the people who hold them,
+# per entity.  The approval_chain engine (backend/app/approval_chain.py)
+# loads this file at startup; no code changes are needed to reassign a role.
+#
+# Entities
+#   PAM  =  Page Asset Management Limited
+#   PCL  =  Page Capital Limited
+#
+# Role semantics
+#   head_concur       – business-head concurrent sign-off (initiating dept.)
+#   internal_control  – Internal Control / Compliance review
+#   compliance        – Compliance officer (routed only when beneficiary is not registered)
+#   finance           – Finance authorisation
+#   signatory_1       – Bank signatory A (Class B)
+#   signatory_2       – Bank signatory B (Class A / MD-level)
+#   md                – Managing Director
+#   ceo               – Chief Executive Officer (large expense escalation only)
+#
+# stand_ins
+#   When a step is overdue past 2× its time-limit the engine reassigns the
+#   step to the stand_in email listed here.  Both parties are notified.
+
+entities:
+  PAM:
+    head_concur:      amos.olanrewaju@pageaml.com
+    internal_control: olawunmi.oladigbo@pageaml.com
+    compliance:       olawunmi.oladigbo@pageaml.com
+    finance:          damilola.osifala@pageaml.com
+    signatory_1:      toyin.akinde@pageaml.com
+    signatory_2:      rogunsipe@pagefinancials.com
+    md:               toyin.akinde@pageaml.com
+    ceo:              rogunsipe@pagefinancials.com
+
+  PCL:
+    head_concur:      Adewale.Bamiro@pagecapitalng.com
+    internal_control: olawunmi.oladigbo@pageaml.com
+    compliance:       olawunmi.oladigbo@pageaml.com
+    finance:          damilola.osifala@pageaml.com
+    signatory_1:      toyin.akinde@pageaml.com
+    signatory_2:      segun.akintemi@pageaml.com
+    md:               toyin.akinde@pageaml.com
+    ceo:              rogunsipe@pagefinancials.com
+
+stand_ins:
+  olawunmi.oladigbo@pageaml.com: udochukwu.okigbo@pageaml.com
+  toyin.akinde@pageaml.com:      adenike.odesanya@pageaml.com

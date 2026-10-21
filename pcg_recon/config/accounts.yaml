@@ -1,0 +1,153 @@
+# Account registry — Page Capital Group live accounts.
+# Three Providus NGN accounts across two entities (PAM + PCL).
+#
+# purpose:      operating | client_money | fund_custody | collections | disbursement
+# client_money: true  => daily cadence, unidentified credits → AML review,
+#               zero tolerance, stricter ageing escalation.
+#
+# GL codes (Symplus):
+#   GL0811101500  Providus Bank – Client       (PAM, account ****2286)
+#   GL0811101600  Providus Bank – Disc Prestige (PAM, account ****4279)  ← confirm with Finance
+#   PCL GL code: confirm with Finance/Symplus
+#
+# Email statement pull: set sender_filter to the exact From address Providus uses.
+# If unknown, upload statements manually via the Files page until confirmed.
+#
+# To enable daily auto-pull once Providus sender email is confirmed:
+#   1. Set auto_fetch.enabled: true
+#   2. Set bank_feed.sender_filter: "exact@providusbank.com"
+#
+# GL is always manual until Symplus API endpoint is live (pending Neulogic).
+
+entities:
+  PAM:
+    name: Page Asset Management Limited
+    regulator: SEC Nigeria (Fund Manager)
+  PCL:
+    name: Page Capital Limited
+    regulator: CBN (Finance Company)
+
+accounts:
+
+  # ── Page Asset Management — Providus Clients Account ─────────────────────────
+  # Primary client money account. Subscriptions in, redemptions out.
+  - id: PAM-PRV-CLIENTS
+    enabled: true
+    entity: PAM
+    bank: Providus Bank
+    account_number: "5401732286"
+    account_masked: "****2286"
+    currency: NGN
+    gl_account: "GL0811101500"          # Symplus GL — confirmed from Providus CLient_Ledger.xlsx
+    gl_balance_convention: credit       # Symplus shows this GL as a CREDIT (liability) balance.
+    book_of_account: "GL08"
+    trans_code: "000"
+    purpose: client_money
+    client_money: true
+    cadence: daily
+    date_window_days: 3
+    opening_book_balance: -1874608363.58
+
+    bank_feed:
+      connector: email_imap
+      sender_filter: "alert@providusunitybank.com"   # ← confirm exact Providus sender email with IT
+      format: tabular
+      profile: providus_xls
+      path: "PAM-PRV-CLIENTS/STATEMENT*.xls"
+
+    ledger_feed:
+      connector: symplus_watch
+      format: tabular
+      profile: symplus_ledger
+      path: "PAM-PRV-CLIENTS/symplus_ledger_*.xlsx"
+
+    auto_fetch:
+      enabled: true
+      statement_time: "21:00"   # COB — pull daily bank statement (Africa/Lagos)
+      gl_time:        "20:30"   # placeholder — GL is manual until Symplus API is live
+      auto_run:       true      # trigger reconciliation automatically after fetch
+
+    posting:
+      connector: symplus_csv
+      batch_prefix: PAM-PRV-CLIENTS
+      output_dir: "./symplus_imports"
+
+  # ── Page Asset Management — Providus Disc Prestige Account ───────────────────
+  # Receiving of funds and client payments (Prestige tier).
+  - id: PAM-PRV-PRESTIGE
+    enabled: true
+    entity: PAM
+    bank: Providus Bank
+    account_number: "1309544279"
+    account_masked: "****4279"
+    currency: NGN
+    gl_account: "GL0811101600"          # ← confirm correct Symplus GL code with Finance
+    purpose: client_money
+    client_money: true
+    cadence: daily
+    date_window_days: 3
+    opening_book_balance: 0.00          # ← update with actual opening balance
+
+    bank_feed:
+      connector: email_imap
+      sender_filter: "alert@providusunitybank.com"   # ← confirm exact Providus sender email
+      format: tabular
+      profile: providus_xls
+      path: "PAM-PRV-PRESTIGE/STATEMENT*.xls"
+
+    ledger_feed:
+      connector: symplus_watch
+      format: tabular
+      profile: symplus_ledger
+      path: "PAM-PRV-PRESTIGE/symplus_ledger_*.xlsx"
+
+    auto_fetch:
+      enabled: true
+      statement_time: "21:00"
+      gl_time:        "20:30"
+      auto_run:       true
+
+    posting:
+      connector: symplus_csv
+      batch_prefix: PAM-PRV-PRESTIGE
+      output_dir: "./symplus_imports"
+
+  # ── Page Capital Limited — Providus NGN Account ───────────────────────────────
+  # Primary NGN operating account for Page Capital.
+  - id: PCL-PRV-NGN
+    enabled: true
+    entity: PCL
+    bank: Providus Bank
+    account_number: "5401941794"
+    account_masked: "****1794"
+    currency: NGN
+    gl_account: "PCL-GL-1010"           # ← confirm correct Symplus GL code with Finance
+    purpose: operating
+    client_money: false
+    cadence: daily
+    date_window_days: 5
+    opening_book_balance: 0.00          # ← update with actual opening balance
+
+    bank_feed:
+      connector: email_imap
+      sender_filter: "alert@providusunitybank.com"   # ← confirm exact Providus sender email
+      format: tabular
+      profile: providus_xls
+      path: "PCL-PRV-NGN/STATEMENT*.xls"
+
+    ledger_feed:
+      connector: symplus_watch
+      format: tabular
+      profile: symplus_ledger
+      path: "PCL-PRV-NGN/symplus_ledger_*.xlsx"
+
+    auto_fetch:
+      enabled: true
+      statement_time: "21:00"
+      gl_time:        "20:30"
+      auto_run:       true
+
+    posting:
+      connector: symplus_csv
+      batch_prefix: PCL-PRV-NGN
+      output_dir: "./symplus_imports"

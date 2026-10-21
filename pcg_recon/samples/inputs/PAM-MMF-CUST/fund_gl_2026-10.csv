@@ -1,0 +1,73 @@
+Date,Reference,Label,Account,Debit,Credit
+2026-10-02,JV-BC-EMTL,Sep 2026 EMTL levy,F1-1001,0,450.00
+2026-10-02,JV-BC-EMTL,Sep 2026 EMTL levy,F1-2001,450.00,0
+2026-10-02,JV-BC-SMS ,Sep 2026 SMS alert charges,F1-1001,0,4000.00
+2026-10-02,JV-BC-SMS ,Sep 2026 SMS alert charges,F1-2001,4000.00,0
+2026-10-02,JV-BC-VAT ,Sep 2026 VAT on bank charges,F1-1001,0,300.00
+2026-10-02,JV-BC-VAT ,Sep 2026 VAT on bank charges,F1-2001,300.00,0
+2026-10-02,JV-BC-INTE,Sep 2026 Interest credit,F1-1001,1845210.45,0
+2026-10-02,JV-BC-INTE,Sep 2026 Interest credit,F1-2001,0,1845210.45
+2026-10-02,JV-BC-WHT ,Sep 2026 WHT on interest,F1-1001,0,184521.05
+2026-10-02,JV-BC-WHT ,Sep 2026 WHT on interest,F1-2001,184521.05,0
+2026-10-03,PV103888,Payment to Lagos Energy Ltd PV103888,F1-1001,0,18160000.00
+2026-10-03,PV103888,Payment to Lagos Energy Ltd PV103888,F1-2001,18160000.00,0
+2026-10-03,PV109466,Payment to Datasafe Nigeria Ltd PV109466,F1-1001,0,22420000.00
+2026-10-03,PV109466,Payment to Datasafe Nigeria Ltd PV109466,F1-2001,22420000.00,0
+2026-10-04,,Being amount received from Bolanle Ogundipe,F1-1001,22690000.00,0
+2026-10-04,,Being amount received from Bolanle Ogundipe,F1-2001,0,22690000.00
+2026-10-04,PAM-SUB-980264,Receipt Ngozi Eze PAM-SUB-980264,F1-1001,49540000.00,0
+2026-10-04,PAM-SUB-980264,Receipt Ngozi Eze PAM-SUB-980264,F1-2001,0,49540000.00
+2026-10-07,CHQ 000619,Chq 000619 Ikeja Legal Chambers,F1-1001,0,2200000.00
+2026-10-07,CHQ 000619,Chq 000619 Ikeja Legal Chambers,F1-2001,2200000.00,0
+2026-10-10,PV101906,Payment to Zenith Office Supplies PV101906,F1-1001,0,3140000.00
+2026-10-10,PV101906,Payment to Zenith Office Supplies PV101906,F1-2001,3140000.00,0
+2026-10-10,PV106703,Payment to Primeaudit Partners PV106703,F1-1001,0,370000.00
+2026-10-10,PV106703,Payment to Primeaudit Partners PV106703,F1-2001,370000.00,0
+2026-10-10,,Swiftnet retainer,F1-1001,0,1500000.00
+2026-10-10,,Swiftnet retainer,F1-2001,1500000.00,0
+2026-10-11,,Being amount received from Chioma Okafor,F1-1001,33520000.00,0
+2026-10-11,,Being amount received from Chioma Okafor,F1-2001,0,33520000.00
+2026-10-11,,Swiftnet retainer,F1-1001,0,1500000.00
+2026-10-11,,Swiftnet retainer,F1-2001,1500000.00,0
+2026-10-12,PAM-SUB-486427,Receipt Funmilayo Adeyemi PAM-SUB-486427,F1-1001,26720000.00,0
+2026-10-12,PAM-SUB-486427,Receipt Funmilayo Adeyemi PAM-SUB-486427,F1-2001,0,26720000.00
+2026-10-12,PV109376,Payment to Lagos Energy Ltd PV109376,F1-1001,0,310000.00
+2026-10-12,PV109376,Payment to Lagos Energy Ltd PV109376,F1-2001,310000.00,0
+2026-10-13,,Being amount received from Funmilayo Adeyemi,F1-1001,48070000.00,0
+2026-10-13,,Being amount received from Funmilayo Adeyemi,F1-2001,0,48070000.00
+2026-10-16,PAM-SUB-516878,Receipt Emeka Nwosu PAM-SUB-516878,F1-1001,820000.00,0
+2026-10-16,PAM-SUB-516878,Receipt Emeka Nwosu PAM-SUB-516878,F1-2001,0,820000.00
+2026-10-16,PV103242,Payment to Zenith Office Supplies PV103242,F1-1001,0,27090000.00
+2026-10-16,PV103242,Payment to Zenith Office Supplies PV103242,F1-2001,27090000.00,0
+2026-10-16,AFH-2026-091,Receipt Afolabi Holdings settlement,F1-1001,20000000.00,0
+2026-10-16,AFH-2026-091,Receipt Afolabi Holdings settlement,F1-2001,0,20000000.00
+2026-10-17,PV104094,Payment to Lagos Energy Ltd PV104094,F1-1001,0,26150000.00
+2026-10-17,PV104094,Payment to Lagos Energy Ltd PV104094,F1-2001,26150000.00,0
+2026-10-18,PV107575,Payment to Ikoyi Properties Ltd PV107575,F1-1001,0,25820000.00
+2026-10-18,PV107575,Payment to Ikoyi Properties Ltd PV107575,F1-2001,25820000.00,0
+2026-10-21,,Being amount received from Yusuf Abdullahi,F1-1001,19830000.00,0
+2026-10-21,,Being amount received from Yusuf Abdullahi,F1-2001,0,19830000.00
+2026-10-22,,Being amount received from Adebayo Oluwaseun,F1-1001,9600000.00,0
+2026-10-22,,Being amount received from Adebayo Oluwaseun,F1-2001,0,9600000.00
+2026-10-22,BULK10678,Bulk batch BULK10678 item 1,F1-1001,0,4125000.00
+2026-10-22,BULK10678,Bulk batch BULK10678 item 1,F1-2001,4125000.00,0
+2026-10-22,BULK10678,Bulk batch BULK10678 item 2,F1-1001,0,2870000.00
+2026-10-22,BULK10678,Bulk batch BULK10678 item 2,F1-2001,2870000.00,0
+2026-10-22,BULK10678,Bulk batch BULK10678 item 3,F1-1001,0,1655500.00
+2026-10-22,BULK10678,Bulk batch BULK10678 item 3,F1-2001,1655500.00,0
+2026-10-23,,Being amount received from Bolanle Ogundipe,F1-1001,27670000.00,0
+2026-10-23,,Being amount received from Bolanle Ogundipe,F1-2001,0,27670000.00
+2026-10-23,PV107095,Payment to Ikoyi Properties Ltd PV107095,F1-1001,0,3690000.00
+2026-10-23,PV107095,Payment to Ikoyi Properties Ltd PV107095,F1-2001,3690000.00,0
+2026-10-24,,Being amount received from Ibrahim Musa,F1-1001,8050000.00,0
+2026-10-24,,Being amount received from Ibrahim Musa,F1-2001,0,8050000.00
+2026-10-24,PV105866,Payment to Datasafe Nigeria Ltd PV105866,F1-1001,0,27900000.00
+2026-10-24,PV105866,Payment to Datasafe Nigeria Ltd PV105866,F1-2001,27900000.00,0
+2026-10-25,,Being amount received from Yusuf Abdullahi,F1-1001,26090000.00,0
+2026-10-25,,Being amount received from Yusuf Abdullahi,F1-2001,0,26090000.00
+2026-10-25,PAM-SUB-297461,Receipt Halima Bello PAM-SUB-297461,F1-1001,19460000.00,0
+2026-10-25,PAM-SUB-297461,Receipt Halima Bello PAM-SUB-297461,F1-2001,0,19460000.00
+2026-10-26,,Being amount received from Adebayo Oluwaseun,F1-1001,5580000.00,0
+2026-10-26,,Being amount received from Adebayo Oluwaseun,F1-2001,0,5580000.00
+2026-10-26,,Being amount received from Halima Bello,F1-1001,14710000.00,0
+2026-10-26,,Being amount received from Halima Bello,F1-2001,0,14710000.00
