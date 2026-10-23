@@ -18,6 +18,8 @@ frontend/out/
 
 # DB and uploads — persist on server, not in git
 pcg_recon/recon.db
+pcg_recon/recon.db-shm
+pcg_recon/recon.db-wal
 pcg_recon/samples/output/
 backend/uploads/
 data/

@@ -3,20 +3,21 @@
 # Run via cron: 0 2 * * * /opt/pagerails/backup.sh >> /var/log/pagerails-backup.log 2>&1
 set -euo pipefail
 
-BACKUP_DIR="${BACKUP_DIR:-/opt/pagerails-backups}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DB_PATH="${SCRIPT_DIR}/pcg_recon/recon.db"
+UPLOADS_PATH="${SCRIPT_DIR}/backend/uploads"
+BACKUP_DIR="${BACKUP_DIR:-${SCRIPT_DIR}/backups}"
 DATE=$(date +%Y-%m-%d)
 
 mkdir -p "$BACKUP_DIR"
 
 echo "[backup] $DATE — starting"
 
-# Stop writes momentarily for a consistent SQLite snapshot
-docker compose exec backend sqlite3 /data/recon.db ".backup /data/pagerails-backup-$DATE.db"
-cp /opt/pagerails/data/pagerails-backup-"$DATE".db "$BACKUP_DIR/"
-rm /opt/pagerails/data/pagerails-backup-"$DATE".db
+# Consistent SQLite snapshot using the built-in .backup command
+sqlite3 "$DB_PATH" ".backup ${BACKUP_DIR}/pagerails-backup-${DATE}.db"
 
 # Archive uploads
-tar -czf "$BACKUP_DIR/uploads-$DATE.tar.gz" /opt/pagerails/data/uploads/ 2>/dev/null || true
+tar -czf "$BACKUP_DIR/uploads-$DATE.tar.gz" "$UPLOADS_PATH" 2>/dev/null || true
 
 # Keep last 30 days
 find "$BACKUP_DIR" -name "pagerails-backup-*.db"    -mtime +30 -delete
