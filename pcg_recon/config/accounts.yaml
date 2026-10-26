@@ -65,7 +65,7 @@ accounts:
       enabled: true
       statement_time: "21:00"   # COB — pull daily bank statement (Africa/Lagos)
       gl_time:        "20:30"   # placeholder — GL is manual until Symplus API is live
-      auto_run:       true      # trigger reconciliation automatically after fetch
+      auto_run:       false     # disabled until statement files are confirmed arriving
 
     posting:
       connector: symplus_csv
@@ -105,7 +105,7 @@ accounts:
       enabled: true
       statement_time: "21:00"
       gl_time:        "20:30"
-      auto_run:       true
+      auto_run:       false     # disabled until statement files are confirmed arriving
 
     posting:
       connector: symplus_csv
@@ -145,7 +145,7 @@ accounts:
       enabled: true
       statement_time: "21:00"
       gl_time:        "20:30"
-      auto_run:       true
+      auto_run:       false     # disabled until statement files are confirmed arriving
 
     posting:
       connector: symplus_csv

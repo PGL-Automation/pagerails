@@ -366,7 +366,12 @@ def generate_letter(request: dict[str, Any], account: dict[str, Any]) -> str:
     amount_fmt   = _fmt_amount(amount_kobo)
     amount_words = amount_in_words(amount_kobo)
 
-    # Signatory images
+    # Signatory images — sig2 differs by entity
+    _SIG2_FILE = {
+        "PAM": "signatory_2",   # Deremi Ogunsipe
+        "PCL": "segun_signature",  # Segun Akintemi
+    }
+
     def _sig_img_tag(role: str) -> str:
         result = _load_signature_b64(role)
         if result:
@@ -375,7 +380,7 @@ def generate_letter(request: dict[str, Any], account: dict[str, Any]) -> str:
         return ""  # graceful skip
 
     sig1_img = _sig_img_tag("signatory_1")
-    sig2_img = _sig_img_tag("signatory_2")
+    sig2_img = _sig_img_tag(_SIG2_FILE.get(entity_code, "signatory_2"))
 
     html = f"""<!DOCTYPE html>
 <html lang="en">

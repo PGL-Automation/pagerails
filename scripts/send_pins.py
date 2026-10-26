@@ -67,7 +67,7 @@ from your phone. Keep it private: every action is recorded in your
 name with the time and cannot be changed afterwards.
 
 To set up your PIN:
-1. Open http://localhost:3000 (or https://recon.pagecapital.ng when live)
+1. Open http://192.168.0.171:3000
 2. Log in with your email and temporary password: PageOS2026!
 3. Click your name in the top-right corner → "Set PIN"
 4. Enter this PIN: {pin}

@@ -49,7 +49,7 @@ PageRails goes live on Monday 26 October 2026 at 08:00.
 Before Monday, please complete ONE action:
 
   1. Open PageRails in your browser (from any computer in the office):
-     http://192.168.1.x:3000   ← Nonso will confirm the exact address
+     http://192.168.0.171:3000
 
   2. Log in with:
      Email:    {email}
